@@ -1,0 +1,8 @@
+(MainThread) 181129_23:41:35.949 ERROR wrapper.py:56 ERROR -1 2104 Market data farm connection is OK:njcash
+(MainThread) 181129_23:41:35.949 ERROR wrapper.py:56 ERROR -1 2104 Market data farm connection is OK:jfarm
+(MainThread) 181129_23:41:35.949 ERROR wrapper.py:56 ERROR -1 2104 Market data farm connection is OK:njopt
+(MainThread) 181129_23:41:35.949 ERROR wrapper.py:56 ERROR -1 2104 Market data farm connection is OK:njfarm
+(MainThread) 181129_23:41:35.949 ERROR wrapper.py:56 ERROR -1 2106 HMDS data farm connection is OK:hkhmds
+(MainThread) 181129_23:41:35.949 ERROR wrapper.py:56 ERROR -1 2106 HMDS data farm connection is OK:cashhmds
+(MainThread) 181129_23:41:35.950 ERROR wrapper.py:56 ERROR -1 2106 HMDS data farm connection is OK:ushmds
+(MainThread) 181129_23:41:55.994 ERROR wrapper.py:56 ERROR 4102 366 No historical data query found for ticker id:4102
