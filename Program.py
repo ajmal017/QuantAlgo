@@ -183,7 +183,7 @@ class TestWrapper(wrapper.EWrapper):
 
 # ! [socket_init]
 class TestApp(TestWrapper, TestClient):
-    def __init__(self):
+    def __init__(self, reqCode, **kwReq):
         TestWrapper.__init__(self)
         TestClient.__init__(self, wrapper=self)
         # ! [socket_init]
@@ -194,6 +194,14 @@ class TestApp(TestWrapper, TestClient):
         self.reqId2nErr = collections.defaultdict(int)
         self.globalCancelOnly = False
         self.simplePlaceOid = None
+        self.reqCode = reqCode
+        self.kwReq = kwReq
+        self.candleData = []
+
+        self.requestMapper = {0: self.historicalDataOperations_req,
+                   1: self.optionsOperations_req,
+                   # 2: sqr,
+                   }
 
     def dumpTestCoverageSituation(self):
         for clntMeth in sorted(self.clntMeth2callCount.keys()):
@@ -244,13 +252,17 @@ class TestApp(TestWrapper, TestClient):
             self.reqGlobalCancel()
         else:
             print("Executing requests")
+
+            self.requestMapper[self.reqCode](self.kwReq)
+
+
             #self.reqGlobalCancel()
             #self.marketDataTypeOperations()
             #self.accountOperations_req()
             #self.tickDataOperations_req()
             # self.marketDepthOperations_req()
             #self.realTimeBarsOperations_req()
-            self.historicalDataOperations_req()
+            # self.historicalDataOperations_req()
             #self.optionsOperations_req()
             #self.marketScannersOperations_req()
             #self.fundamentalsOperations_req()
@@ -287,7 +299,7 @@ class TestApp(TestWrapper, TestClient):
         #self.tickDataOperations_cancel()
         # self.marketDepthOperations_cancel()
         #self.realTimeBarsOperations_cancel()
-        self.historicalDataOperations_cancel()
+        # self.historicalDataOperations_cancel()
         #self.optionsOperations_cancel()
         #self.marketScanners_cancel()
         #self.fundamentalsOperations_cancel()
@@ -938,24 +950,31 @@ class TestApp(TestWrapper, TestClient):
         self.cancelRealTimeBars(3001)
         # ! [cancelrealtimebars]
 
-    @printWhenExecuting
-    def historicalDataOperations_req(self):
+    # @printWhenExecuting
+    def historicalDataOperations_req(self, kwargs):
+        # def historicalDataOperations_req(self):
+
         # Requesting historical data
         # ! [reqHeadTimeStamp]
-        self.reqHeadTimeStamp(4101, ContractSamples.USStockWithPrimaryExch(), "TRADES", 0, 1)
+        # self.reqHeadTimeStamp(4101, ContractSamples.USStockWithPrimaryExch(), "TRADES", 0, 1)
         # ! [reqHeadTimeStamp]
 
         # ! [reqhistoricaldata]
-        queryTime = datetime.datetime.today().strftime("%Y%m%d %H:%M:%S")
-        # queryTime = (datetime.datetime.today() - datetime.timedelta(days=180)).strftime("%Y%m%d %H:%M:%S")
-        print("lalala request ending time: "+queryTime)
-        self.reqHistoricalData(4102, ContractSamples.USStockWithPrimaryExch(), queryTime,
-                               "1 W", "15 mins", "TRADES", 1, 1, False, [])
+        # endQueryTime = datetime.datetime.today().strftime("%Y%m%d %H:%M:%S")
+        # endQueryTime = (datetime.datetime.today() - datetime.timedelta(days=180)).strftime("%Y%m%d %H:%M:%S")
+
+        endQueryTime = kwargs["endQueryTime"]
+        timeSpam = kwargs["timeSpam"]
+        candleSpam = kwargs["candleSpam"]
+        contract = kwargs["contract"]
+
+        self.reqHistoricalData(4102, contract, endQueryTime,
+                               timeSpam, candleSpam, "TRADES", 1, 1, False, [])
 
 
-        # self.reqHistoricalData(4102, ContractSamples.EurGbpFx(), queryTime,
+        # self.reqHistoricalData(4102, ContractSamples.EurGbpFx(), endQueryTime,
         #                        "1 M", "1 day", "MIDPOINT", 1, 1, False, [])
-        # self.reqHistoricalData(4103, ContractSamples.EuropeanStock(), queryTime,
+        # self.reqHistoricalData(4103, ContractSamples.EuropeanStock(), endQueryTime,
         #                        "10 D", "1 min", "TRADES", 1, 1, False, [])
         # self.reqHistoricalData(4104, ContractSamples.EurGbpFx(), "",
         #                        "1 M", "1 day", "MIDPOINT", 1, 1, True, [])
@@ -964,15 +983,16 @@ class TestApp(TestWrapper, TestClient):
     @printWhenExecuting
     def historicalDataOperations_cancel(self):
         # ! [cancelHeadTimestamp]
-        self.cancelHeadTimeStamp(4101)
+        # self.cancelHeadTimeStamp(4101)
         # ! [cancelHeadTimestamp]
 
         # Canceling historical data requests
         # ! [cancelhistoricaldata]
-        self.cancelHistoricalData(4102)
+        # self.cancelHistoricalData(4102)
         # self.cancelHistoricalData(4103)
         # self.cancelHistoricalData(4104)
         # ! [cancelhistoricaldata]
+        pass
 
     @printWhenExecuting
     def historicalTicksOperations(self):
@@ -1000,7 +1020,9 @@ class TestApp(TestWrapper, TestClient):
     @iswrapper
     # ! [historicaldata]
     def historicalData(self, reqId:int, bar: BarData):
-        print("HistoricalData. ReqId:", reqId, "BarData.", bar)
+        # print("HistoricalData. ReqId:", reqId, "BarData.", bar)
+        cd = [bar.date, bar.open, bar.high, bar.low, bar.close, bar.volume, bar.average, bar.barCount]
+        self.candleData.append(cd)
     # ! [historicaldata]
 
     @iswrapper
@@ -1897,6 +1919,7 @@ def main():
         print("serverVersion:%s connectionTime:%s" % (app.serverVersion(),
                                                       app.twsConnectionTime()))
 
+
         # ! [clientrun]
         app.run()
         # ! [clientrun]
@@ -1905,6 +1928,13 @@ def main():
     finally:
         app.dumpTestCoverageSituation()
         app.dumpReqAnsErrSituation()
+
+        for candle in app.candleData:
+            print(candle)
+            print(type(candle))
+        # with open('your_file.txt', 'w') as f:
+        #     for item in app.candleData:
+        #         f.write("%s\n" % item)
 
 
 if __name__ == "__main__":

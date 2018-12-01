@@ -145,7 +145,7 @@ class ContractSamples:
     def USStockWithPrimaryExch():
         #! [stkcontractwithprimary]
         contract = Contract()
-        contract.symbol = "MSFT"
+        contract.symbol = "SQ"
         contract.secType = "STK"
         contract.currency = "USD"
         contract.exchange = "SMART"
