@@ -34,11 +34,14 @@ def main():
         return contract
 
     # args for retrieving candle data
-    endQueryTime = datetime.datetime.today().strftime("%Y%m%d %H:%M:%S")
+    # endQueryTime = datetime.datetime.today().strftime("%Y%m%d %H:%M:%S")
+    endQueryTime = datetime.datetime(2018,11,30, 23,59,59).strftime("%Y%m%d %H:%M:%S")
+    # datetime.timedelta(days=180)
     timeSpam = "1 W"
     candleSpam = "5 mins"
-    dataFileName = "candleData/"+timeSpam+"_to_"+endQueryTime[:8]+"_"+candleSpam+".txt"
-    contract = USStockWithPrimaryExch("SQ")
+    symbol = "SQ"
+    contract = USStockWithPrimaryExch(symbol)
+    dataFileName = "HistorialData/"+symbol+"_"+timeSpam+"_to_"+endQueryTime[:8]+"_"+candleSpam+".txt"
 
     try:
         app = TestApp(0, contract=contract, endQueryTime=endQueryTime, timeSpam=timeSpam, candleSpam=candleSpam)
@@ -49,8 +52,6 @@ def main():
         # ! [connect]
         print("serverVersion:%s connectionTime:%s" % (app.serverVersion(),
                                                       app.twsConnectionTime()))
-
-
         # ! [clientrun]
         app.run()
         # ! [clientrun]
@@ -59,10 +60,6 @@ def main():
     finally:
         app.dumpTestCoverageSituation()
         app.dumpReqAnsErrSituation()
-
-        # with open(dataFileName, 'w') as f:
-        #     for item in app.candleData:
-        #         f.write("%s\n" % item)
 
         f = open(dataFileName, 'w')
         try:

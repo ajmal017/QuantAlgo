@@ -1,0 +1,7 @@
+(MainThread) 181130_21:47:47.807 ERROR wrapper.py:56 ERROR -1 2104 Market data farm connection is OK:cashfarm
+(MainThread) 181130_21:47:47.808 ERROR wrapper.py:56 ERROR -1 2104 Market data farm connection is OK:usopt
+(MainThread) 181130_21:47:47.808 ERROR wrapper.py:56 ERROR -1 2104 Market data farm connection is OK:usfarm
+(MainThread) 181130_21:47:47.808 ERROR wrapper.py:56 ERROR -1 2106 HMDS data farm connection is OK:njhmds
+(MainThread) 181130_21:47:47.808 ERROR wrapper.py:56 ERROR -1 2106 HMDS data farm connection is OK:cashhmds
+(MainThread) 181130_21:47:47.808 ERROR wrapper.py:56 ERROR -1 2106 HMDS data farm connection is OK:ushmds
+(MainThread) 181130_21:47:47.827 ERROR wrapper.py:56 ERROR 4102 321 Error validating request:-'bN' : cause - Historical data bar size setting is invalid. Legal ones are: 1 secs, 5 secs, 10 secs, 15 secs, 30 secs, 1 min, 2 mins, 3 mins, 5 mins, 10 mins, 15 mins, 20 mins, 30 mins, 1 hour, 2 hours, 3 hours, 4 hours, 8 hours, 1 day, 1W, 1M
