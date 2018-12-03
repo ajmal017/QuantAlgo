@@ -1,6 +1,0 @@
-(MainThread) 181130_21:50:02.158 ERROR wrapper.py:56 ERROR -1 2104 Market data farm connection is OK:cashfarm
-(MainThread) 181130_21:50:02.158 ERROR wrapper.py:56 ERROR -1 2104 Market data farm connection is OK:usopt
-(MainThread) 181130_21:50:02.159 ERROR wrapper.py:56 ERROR -1 2104 Market data farm connection is OK:usfarm
-(MainThread) 181130_21:50:02.159 ERROR wrapper.py:56 ERROR -1 2106 HMDS data farm connection is OK:njhmds
-(MainThread) 181130_21:50:02.159 ERROR wrapper.py:56 ERROR -1 2106 HMDS data farm connection is OK:cashhmds
-(MainThread) 181130_21:50:02.159 ERROR wrapper.py:56 ERROR -1 2106 HMDS data farm connection is OK:ushmds

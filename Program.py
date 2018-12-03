@@ -1020,7 +1020,7 @@ class TestApp(TestWrapper, TestClient):
     @iswrapper
     # ! [historicaldata]
     def historicalData(self, reqId:int, bar: BarData):
-        # print("HistoricalData. ReqId:", reqId, "BarData.", bar)
+        print("HistoricalData. ReqId:", reqId, "BarData.", bar)
         cd = [bar.date, bar.open, bar.high, bar.low, bar.close, bar.volume, bar.average, bar.barCount]
         self.candleData.append(cd)
     # ! [historicaldata]

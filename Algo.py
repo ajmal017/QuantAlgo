@@ -1,72 +1,61 @@
-from Program import *
+# import tensorflow as tf
+import matplotlib
+import matplotlib.pyplot as plt
+from datetime import datetime
+import numpy as np
 
-# Columns in CandleData list is as
-# [date, open, high, low, close, volume, average, barCount]
-def main():
-    SetupLogger()
-    logging.debug("now is %s", datetime.datetime.now())
-    logging.getLogger().setLevel(logging.ERROR)
 
-    cmdLineParser = argparse.ArgumentParser("api tests")
-    # cmdLineParser.add_option("-c", action="store_True", dest="use_cache", default = False, help = "use the cache")
-    # cmdLineParser.add_option("-f", action="store", type="string", dest="file", default="", help="the input file")
-    cmdLineParser.add_argument("-p", "--port", action="store", type=int,
-                               dest="port", default=7497, help="The TCP port to use")
-    cmdLineParser.add_argument("-C", "--global-cancel", action="store_true",
-                               dest="global_cancel", default=False,
-                               help="whether to trigger a globalCancel req")
-    args = cmdLineParser.parse_args()
-    print("Using args", args)
-    logging.debug("Using args %s", args)
-    # print(args)
+def readDataFromFile(file):
+    data = []
+    for line in file:
+        line = line[1:-2]
+        li = list(line.split(","))
+        item = []
+        # [date, open, high, low, close, volume, average, barCount]
+        # keep date, close and volume
+        for i, x in enumerate(li):
+            if i == 0:
+                y = x.strip("'")
+                dt = y[:8]
+                tm = y[-8:]
+                item.append(dt)
+                # if there's time following date, separate them and store both
+                if len(x) == 20:
+                    item.append(tm)
+            elif i == 4:
+                item.append(float(x.strip()))
+            elif i == 5:
+                item.append(int(x.strip()))
+        data.append(item)
+    return data
 
-    def USStockWithPrimaryExch(symbol):
-        #! [stkcontractwithprimary]
-        contract = Contract()
-        contract.symbol = symbol
-        contract.secType = "STK"
-        contract.currency = "USD"
-        contract.exchange = "SMART"
-        #Specify the Primary Exchange attribute to avoid contract ambiguity
-        #(there is an ambiguity because there is also a MSFT contract with primary exchange = "AEB")
-        contract.primaryExchange = "ISLAND"
-        #! [stkcontractwithprimary]
-        return contract
-
-    # args for retrieving candle data
-    # endQueryTime = datetime.datetime.today().strftime("%Y%m%d %H:%M:%S")
-    endQueryTime = datetime.datetime(2018,11,30, 23,59,59).strftime("%Y%m%d %H:%M:%S")
-    # datetime.timedelta(days=180)
-    timeSpam = "1 W"
-    candleSpam = "5 mins"
-    symbol = "SQ"
-    contract = USStockWithPrimaryExch(symbol)
-    dataFileName = "HistorialData/"+symbol+"_"+timeSpam+"_to_"+endQueryTime[:8]+"_"+candleSpam+".txt"
-
+def read(filename):
+    f = open(filename, 'r')
     try:
-        app = TestApp(0, contract=contract, endQueryTime=endQueryTime, timeSpam=timeSpam, candleSpam=candleSpam)
-        if args.global_cancel:
-            app.globalCancelOnly = True
-        # ! [connect]
-        app.connect("127.0.0.1", args.port, clientId=0)
-        # ! [connect]
-        print("serverVersion:%s connectionTime:%s" % (app.serverVersion(),
-                                                      app.twsConnectionTime()))
-        # ! [clientrun]
-        app.run()
-        # ! [clientrun]
-    except:
-        raise
+        data = readDataFromFile(f)
     finally:
-        app.dumpTestCoverageSituation()
-        app.dumpReqAnsErrSituation()
+        f.close()
+        return data
 
-        f = open(dataFileName, 'w')
-        try:
-            for item in app.candleData:
-                f.write("%s\n" % item)
-        finally:
-            f.close()
+dailyFileName = "data/SPY_1 day.txt"
+minuteFileName = "data/SPY_3 mins.txt"
 
-if __name__ == "__main__":
-    main()
+dailyData = read(dailyFileName)
+minuteData = read(minuteFileName)
+
+dailyDates = [datetime.strptime(item[0], '%Y%m%d') for item in dailyData]
+dailyClosePrices = [item[1] for item in dailyData]
+dailyVolumes = [item[2] for item in dailyData]
+
+minuteDateTime = [datetime.combine(datetime.strptime(item[0],'%Y%m%d'),
+                                   datetime.strptime(item[1],'%H:%M:%S').time()) for item in minuteData]
+minuteClosePrices = [item[2] for item in minuteData]
+minuteVolumes = [item[3] for item in minuteData]
+
+# plt.plot(dailyDates, dailyClosePrices)
+# plt.gcf().autofmt_xdate()
+# plt.show()
+
+plt.plot(minuteDateTime, minuteClosePrices)
+plt.gcf().autofmt_xdate()
+plt.show()
